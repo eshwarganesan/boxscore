@@ -253,8 +253,17 @@ const boxSlice = createSlice({
                     return state;
             }
         },
+        handleAction: (state, action) => {
+            console.log(JSON.stringify(action.payload));
+            const team = action.payload.Team;
+            const id = action.payload.player_id;
+            const stat = action.payload.column;
+            const value = action.payload.value;
+            state[team][id][stat] += value;
+            return state;
+        },
     },
 });
 
-export const { increment, decrement, newRow, deleteRow } = boxSlice.actions;
+export const { increment, decrement, newRow, deleteRow, handleAction } = boxSlice.actions;
 export default boxSlice.reducer;

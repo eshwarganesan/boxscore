@@ -1,9 +1,10 @@
 import "./App.css";
 import { useState } from "react";
 import { Provider, useSelector, useDispatch } from "react-redux";
-import store from './store';
-import CounterButton from './CounterButton';
-import { newRow, deleteRow } from "./boxSlice";
+import store from "./store";
+import Console from "./Console";
+import { newRow, deleteRow, handleAction } from "./boxSlice";
+import { clear } from "./consoleSlice";
 
 function TextInput() {
     const [data, setData] = useState(0);
@@ -30,18 +31,18 @@ function NumericInput() {
 
     const onChangeInput = (e) => {
         const value = e.target.value;
-        const sanitizedValue = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+        const sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
         setData(sanitizedValue);
-    }
+    };
 
     const handleKeyPress = (e) => {
-        const numericKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        const allowedKeys = ['Backspace', 'Delete', ...numericKeys];
-    
+        const numericKeys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        const allowedKeys = ["Backspace", "Delete", ...numericKeys];
+
         if (!allowedKeys.includes(e.key)) {
-          e.preventDefault();
+            e.preventDefault();
         }
-      };
+    };
 
     return (
         <input
@@ -55,21 +56,36 @@ function NumericInput() {
             class="number"
         />
     );
-    
 }
 
 function Table(props) {
     const dispatch = useDispatch();
-    console.log(JSON.stringify(store.getState(), null, 2));
     const team = props.team;
     const box = useSelector((state) => state.boxScore);
-    
+    const consoleActions = useSelector((state) => state.console);
 
     const addPlayer = () => {
         dispatch(newRow(team));
     };
     const delPlayer = () => {
         dispatch(deleteRow(team));
+    };
+    const handleClick = (id) => {
+        if (Object.keys(consoleActions).length > 0) {
+            dispatch(clear());
+            for (const stat in consoleActions) {
+                if (stat in box[team][id]) {
+                    dispatch(
+                        handleAction({
+                            Team: team,
+                            player_id: id,
+                            column: stat,
+                            value: consoleActions[stat],
+                        })
+                    );
+                }
+            }
+        }
     };
 
     return (
@@ -94,7 +110,6 @@ function Table(props) {
                         <th>PF</th>
                         <th>OREB</th>
                         <th>DREB</th>
-                        <th>REB</th>
                         <th>FG%</th>
                         <th>FT%</th>
                         <th>3PT%</th>
@@ -102,29 +117,31 @@ function Table(props) {
                 </thead>
                 <tbody id={team}>
                     {box[team].map((player) => (
-                        <tr key={player.id}>
+                        <tr
+                            key={player.id}
+                            onClick={() => handleClick(player.id)}
+                        >
                             <td>
                                 <NumericInput />
                             </td>
                             <td>
                                 <TextInput />
                             </td>
-                            <td>{box[team][player.id].pts}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{box[team][player.id]["pts"]}</td>
+                            <td>{box[team][player.id]["reb"]}</td>
+                            <td>{box[team][player.id]["ast"]}</td>
+                            <td>{box[team][player.id]["fgm"]}</td>
+                            <td>{box[team][player.id]["fga"]}</td>
+                            <td>{box[team][player.id]["ftm"]}</td>
+                            <td>{box[team][player.id]["fta"]}</td>
+                            <td>{box[team][player.id]["3fgm"]}</td>
+                            <td>{box[team][player.id]["3fga"]}</td>
+                            <td>{box[team][player.id]["stl"]}</td>
+                            <td>{box[team][player.id]["blk"]}</td>
+                            <td>{box[team][player.id]["to"]}</td>
+                            <td>{box[team][player.id]["pf"]}</td>
+                            <td>{box[team][player.id]["oreb"]}</td>
+                            <td>{box[team][player.id]["dreb"]}</td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -147,7 +164,7 @@ function App() {
         <Provider store={store}>
             <Table team="Home" />
             <Table team="Away" />
-            <CounterButton />
+            <Console />
         </Provider>
     );
 }
