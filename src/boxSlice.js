@@ -254,16 +254,26 @@ const boxSlice = createSlice({
             }
         },
         handleAction: (state, action) => {
-            console.log(JSON.stringify(action.payload));
             const team = action.payload.Team;
             const id = action.payload.player_id;
-            const stat = action.payload.column;
-            const value = action.payload.value;
-            state[team][id][stat] += value;
+            const stats = action.payload.stats;
+
+            for (const stat in stats) {
+                if (stat in state[team][id]) {
+                    console.log(action.payload["undo"]);
+                    if (action.payload["undo"]) {
+                        console.log("Undoing");
+                        state[team][id][stat] -= stats[stat];
+                    } else {
+                        state[team][id][stat] += stats[stat];
+                    }
+                }
+            }
             return state;
         },
     },
 });
 
-export const { increment, decrement, newRow, deleteRow, handleAction } = boxSlice.actions;
+export const { increment, decrement, newRow, deleteRow, handleAction } =
+    boxSlice.actions;
 export default boxSlice.reducer;

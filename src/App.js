@@ -4,7 +4,7 @@ import { Provider, useSelector, useDispatch } from "react-redux";
 import store from "./store";
 import Console from "./Console";
 import { newRow, deleteRow, handleAction } from "./boxSlice";
-import { clear } from "./consoleSlice";
+import { clear, addHistory } from "./consoleSlice";
 
 function TextInput() {
     const [data, setData] = useState(0);
@@ -62,7 +62,7 @@ function Table(props) {
     const dispatch = useDispatch();
     const team = props.team;
     const box = useSelector((state) => state.boxScore);
-    const consoleActions = useSelector((state) => state.console);
+    const consoleActions = useSelector((state) => state.console.action);
 
     const addPlayer = () => {
         dispatch(newRow(team));
@@ -72,19 +72,10 @@ function Table(props) {
     };
     const handleClick = (id) => {
         if (Object.keys(consoleActions).length > 0) {
+            const consoleData = {stats: consoleActions, Team: team, player_id: id, undo: false};
+            dispatch(addHistory({stats: consoleActions, Team: team, player_id: id, undo: true}))
             dispatch(clear());
-            for (const stat in consoleActions) {
-                if (stat in box[team][id]) {
-                    dispatch(
-                        handleAction({
-                            Team: team,
-                            player_id: id,
-                            column: stat,
-                            value: consoleActions[stat],
-                        })
-                    );
-                }
-            }
+            dispatch(handleAction(consoleData));
         }
     };
 
@@ -142,9 +133,27 @@ function Table(props) {
                             <td>{box[team][player.id]["pf"]}</td>
                             <td>{box[team][player.id]["oreb"]}</td>
                             <td>{box[team][player.id]["dreb"]}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>
+                                {box[team][player.id]["fga"] === 0
+                                    ? 0
+                                    : (box[team][player.id]["fgm"] /
+                                          box[team][player.id]["fga"]) *
+                                      100}
+                            </td>
+                            <td>
+                                {box[team][player.id]["fta"] === 0
+                                    ? 0
+                                    : (box[team][player.id]["ftm"] /
+                                          box[team][player.id]["fta"]) *
+                                      100}
+                            </td>
+                            <td>
+                                {box[team][player.id]["3fga"] === 0
+                                    ? 0
+                                    : (box[team][player.id]["3fgm"] /
+                                          box[team][player.id]["3fga"]) *
+                                      100}
+                            </td>
                         </tr>
                     ))}
                 </tbody>
