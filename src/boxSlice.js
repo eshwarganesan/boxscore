@@ -187,6 +187,42 @@ const boxSlice = createSlice({
                 dreb: 0,
             },
         ],
+        Totals: {
+            Home: {
+                pts: 0,
+                reb: 0,
+                ast: 0,
+                fgm: 0,
+                fga: 0,
+                ftm: 0,
+                fta: 0,
+                "3fgm": 0,
+                "3fga": 0,
+                stl: 0,
+                blk: 0,
+                to: 0,
+                pf: 0,
+                oreb: 0,
+                dreb: 0,
+            },
+            Away: {
+                pts: 0,
+                reb: 0,
+                ast: 0,
+                fgm: 0,
+                fga: 0,
+                ftm: 0,
+                fta: 0,
+                "3fgm": 0,
+                "3fga": 0,
+                stl: 0,
+                blk: 0,
+                to: 0,
+                pf: 0,
+                oreb: 0,
+                dreb: 0,
+            },
+        },
     },
     reducers: {
         increment: (state) => void (state["Home"][1].pts += 1),
@@ -242,10 +278,28 @@ const boxSlice = createSlice({
         deleteRow: (state, action) => {
             switch (action.payload) {
                 case "Home": {
+                    const length = state["Home"].length;
+
+                    for (const stat in state["Home"][length - 1]) {
+                        const value = state["Home"][length - 1][stat];
+
+                        if (stat !== "id" && value !== 0) {
+                            return state;
+                        }
+                    }
                     state["Home"].pop();
                     return state;
                 }
                 case "Away": {
+                    const length = state["Away"].length;
+
+                    for (const stat in state["Away"][length - 1]) {
+                        const value = state["Away"][length - 1][stat];
+
+                        if (stat !== "id" && value !== 0) {
+                            return state;
+                        }
+                    }
                     state["Away"].pop();
                     return state;
                 }
@@ -259,11 +313,19 @@ const boxSlice = createSlice({
             const stats = action.payload.stats;
 
             for (const stat in stats) {
-                if (stat in state[team][id]) {
-                    if (action.payload["undo"]) {
+                if (action.payload["undo"]) {
+                    try {
                         state[team][id][stat] -= stats[stat];
-                    } else {
+                    } catch (err) {
+                    } finally {
+                        state["Totals"][team][stat] -= stats[stat];
+                    }
+                } else {
+                    try {
                         state[team][id][stat] += stats[stat];
+                    } catch (err) {
+                    } finally {
+                        state["Totals"][team][stat] += stats[stat];
                     }
                 }
             }

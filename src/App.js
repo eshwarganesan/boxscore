@@ -6,7 +6,7 @@ import Console from "./Console";
 import { newRow, deleteRow, handleAction } from "./boxSlice";
 import { clear, addHistory } from "./consoleSlice";
 
-function TextInput() {
+function TextInput(props) {
     const [data, setData] = useState(0);
     const consoleActions = useSelector((state) => state.console.action);
 
@@ -24,7 +24,7 @@ function TextInput() {
             name="name"
             value={data.name}
             type="text"
-            placeholder="Player name"
+            placeholder={props.placeholder}
             onChange={(e) => onChangeInput(e)}
             disabled={Object.keys(consoleActions).length > 0}
             class="name"
@@ -88,18 +88,10 @@ function Table(props) {
                 stats: consoleActions,
                 Team: team,
                 player_id: id,
-                undo: false,
             };
-            dispatch(
-                addHistory({
-                    stats: consoleActions,
-                    Team: team,
-                    player_id: id,
-                    undo: true,
-                })
-            );
+            dispatch(addHistory({ ...consoleData, undo: true }));
             dispatch(clear());
-            dispatch(handleAction(consoleData));
+            dispatch(handleAction({ ...consoleData, undo: false }));
         }
     };
 
@@ -107,6 +99,11 @@ function Table(props) {
         <div>
             <table>
                 <thead>
+                    <tr id="Totals" onClick={() => handleClick()}>
+                        <td colspan="20">
+                            <TextInput placeholder="Team Name" />
+                        </td>
+                    </tr>
                     <tr>
                         <th>No.</th>
                         <th>Name</th>
@@ -140,7 +137,10 @@ function Table(props) {
                                 <NumericInput />
                             </td>
                             <td>
-                                <TextInput />
+                                <TextInput
+                                    placeholder="Player Name"
+                                    colspan="1"
+                                />
                             </td>
                             <td>{box[team][player.id]["pts"]}</td>
                             <td>{box[team][player.id]["reb"]}</td>
@@ -186,6 +186,29 @@ function Table(props) {
                             </td>
                         </tr>
                     ))}
+                    <tr>
+                        <td colspan="2" class="number">
+                            Totals
+                        </td>
+                        <td>{box["Totals"][team]["pts"]}</td>
+                        <td>{box["Totals"][team]["reb"]}</td>
+                        <td>{box["Totals"][team]["ast"]}</td>
+                        <td>{box["Totals"][team]["fgm"]}</td>
+                        <td>{box["Totals"][team]["fga"]}</td>
+                        <td>{box["Totals"][team]["ftm"]}</td>
+                        <td>{box["Totals"][team]["fta"]}</td>
+                        <td>{box["Totals"][team]["3fgm"]}</td>
+                        <td>{box["Totals"][team]["3fga"]}</td>
+                        <td>{box["Totals"][team]["stl"]}</td>
+                        <td>{box["Totals"][team]["blk"]}</td>
+                        <td>{box["Totals"][team]["to"]}</td>
+                        <td>{box["Totals"][team]["pf"]}</td>
+                        <td>{box["Totals"][team]["oreb"]}</td>
+                        <td>{box["Totals"][team]["dreb"]}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
             <button variant="text" onClick={addPlayer}>
