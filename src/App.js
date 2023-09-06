@@ -8,10 +8,15 @@ import { clear, addHistory } from "./consoleSlice";
 
 function TextInput() {
     const [data, setData] = useState(0);
+    const consoleActions = useSelector((state) => state.console.action);
 
     const onChangeInput = (e) => {
-        const editData = e.target.value;
-        setData(editData);
+        if (Object.keys(consoleActions).length === 0) {
+            const editData = e.target.value;
+            setData(editData);
+        } else {
+            return;
+        }
     };
 
     return (
@@ -21,6 +26,7 @@ function TextInput() {
             type="text"
             placeholder="Player name"
             onChange={(e) => onChangeInput(e)}
+            disabled={Object.keys(consoleActions).length > 0}
             class="name"
         />
     );
@@ -28,11 +34,16 @@ function TextInput() {
 
 function NumericInput() {
     const [data, setData] = useState(0);
+    const consoleActions = useSelector((state) => state.console.action);
 
     const onChangeInput = (e) => {
-        const value = e.target.value;
-        const sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-        setData(sanitizedValue);
+        if (Object.keys(consoleActions).length === 0) {
+            const value = e.target.value;
+            const sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+            setData(sanitizedValue);
+        } else {
+            return;
+        }
     };
 
     const handleKeyPress = (e) => {
@@ -53,6 +64,7 @@ function NumericInput() {
             placeholder="#"
             onChange={(e) => onChangeInput(e)}
             onKeyDown={(e) => handleKeyPress(e)}
+            disabled={Object.keys(consoleActions).length > 0}
             class="number"
         />
     );
@@ -72,8 +84,20 @@ function Table(props) {
     };
     const handleClick = (id) => {
         if (Object.keys(consoleActions).length > 0) {
-            const consoleData = {stats: consoleActions, Team: team, player_id: id, undo: false};
-            dispatch(addHistory({stats: consoleActions, Team: team, player_id: id, undo: true}))
+            const consoleData = {
+                stats: consoleActions,
+                Team: team,
+                player_id: id,
+                undo: false,
+            };
+            dispatch(
+                addHistory({
+                    stats: consoleActions,
+                    Team: team,
+                    player_id: id,
+                    undo: true,
+                })
+            );
             dispatch(clear());
             dispatch(handleAction(consoleData));
         }
@@ -136,23 +160,29 @@ function Table(props) {
                             <td>
                                 {box[team][player.id]["fga"] === 0
                                     ? 0
-                                    : (box[team][player.id]["fgm"] /
-                                          box[team][player.id]["fga"]) *
-                                      100}
+                                    : (
+                                          (box[team][player.id]["fgm"] /
+                                              box[team][player.id]["fga"]) *
+                                          100
+                                      ).toFixed(2)}
                             </td>
                             <td>
                                 {box[team][player.id]["fta"] === 0
                                     ? 0
-                                    : (box[team][player.id]["ftm"] /
-                                          box[team][player.id]["fta"]) *
-                                      100}
+                                    : (
+                                          (box[team][player.id]["ftm"] /
+                                              box[team][player.id]["fta"]) *
+                                          100
+                                      ).toFixed(2)}
                             </td>
                             <td>
                                 {box[team][player.id]["3fga"] === 0
                                     ? 0
-                                    : (box[team][player.id]["3fgm"] /
-                                          box[team][player.id]["3fga"]) *
-                                      100}
+                                    : (
+                                          (box[team][player.id]["3fgm"] /
+                                              box[team][player.id]["3fga"]) *
+                                          100
+                                      ).toFixed(2)}
                             </td>
                         </tr>
                     ))}

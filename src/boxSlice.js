@@ -260,9 +260,7 @@ const boxSlice = createSlice({
 
             for (const stat in stats) {
                 if (stat in state[team][id]) {
-                    console.log(action.payload["undo"]);
                     if (action.payload["undo"]) {
-                        console.log("Undoing");
                         state[team][id][stat] -= stats[stat];
                     } else {
                         state[team][id][stat] += stats[stat];
