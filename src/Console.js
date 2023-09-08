@@ -37,37 +37,37 @@ const Console = () => {
     return (
         <div>
             <div>
-                <button className="btn btn-primary" onClick={() => dispatch(made2pointer())}>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(made2pointer())}>
                     2PT made
                 </button>
-                <button className="btn btn-primary" onClick={() => dispatch(missed2pointer())}>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(missed2pointer())}>
                     2PT missed
                 </button>
-                <button className="btn btn-primary" onClick={() => dispatch(made3pointer())}>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(made3pointer())}>
                     3PT made
                 </button>
-                <button className="btn btn-primary" onClick={() => dispatch(missed3pointer())}>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(missed3pointer())}>
                     3PT missed
                 </button>
-                <button className="btn btn-primary" onClick={() => dispatch(madeFreeThrow())}>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(madeFreeThrow())}>
                     FT made
                 </button>
-                <button className="btn btn-primary" onClick={() => dispatch(missedFreeThrow())}>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(missedFreeThrow())}>
                     FT missed
                 </button>
-                <button className="btn btn-primary" onClick={() => dispatch(defRebound())}>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(defRebound())}>
                     Def. Rebound
                 </button>
-                <button className="btn btn-primary" onClick={() => dispatch(offRebound())}>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(offRebound())}>
                     Off. Rebound
                 </button>
-                <button className="btn btn-primary" onClick={() => dispatch(assist())}>Assist</button>
-                <button className="btn btn-primary" onClick={() => dispatch(steal())}>Steal</button>
-                <button className="btn btn-primary" onClick={() => dispatch(block())}>Block</button>
-                <button className="btn btn-primary" onClick={() => dispatch(turnover())}>Turnover</button>
-                <button className="btn btn-primary" onClick={() => dispatch(foul())}>Foul</button>
-                <button className="btn btn-primary" onClick={() => dispatch(clear())}>Clear</button>
-                <button className="btn btn-primary" onClick={() => handleUndo()}>Undo</button>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(assist())}>Assist</button>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(steal())}>Steal</button>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(block())}>Block</button>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(turnover())}>Turnover</button>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(foul())}>Foul</button>
+                <button className="btn btn-primary btn-dark" onClick={() => dispatch(clear())}>Clear</button>
+                <button className="btn btn-primary btn-dark" onClick={() => handleUndo()}>Undo</button>
             </div>
             <div>
                 <h3>Home</h3>

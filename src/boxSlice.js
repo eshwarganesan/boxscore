@@ -6,6 +6,8 @@ const boxSlice = createSlice({
         Home: [
             {
                 id: 0,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -24,6 +26,8 @@ const boxSlice = createSlice({
             },
             {
                 id: 1,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -42,6 +46,8 @@ const boxSlice = createSlice({
             },
             {
                 id: 2,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -60,6 +66,8 @@ const boxSlice = createSlice({
             },
             {
                 id: 3,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -78,6 +86,8 @@ const boxSlice = createSlice({
             },
             {
                 id: 4,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -98,6 +108,8 @@ const boxSlice = createSlice({
         Away: [
             {
                 id: 0,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -116,6 +128,8 @@ const boxSlice = createSlice({
             },
             {
                 id: 1,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -134,6 +148,8 @@ const boxSlice = createSlice({
             },
             {
                 id: 2,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -152,6 +168,8 @@ const boxSlice = createSlice({
             },
             {
                 id: 3,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -170,6 +188,8 @@ const boxSlice = createSlice({
             },
             {
                 id: 4,
+                name: "",
+                number: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -189,6 +209,7 @@ const boxSlice = createSlice({
         ],
         Totals: {
             Home: {
+                name: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -206,6 +227,7 @@ const boxSlice = createSlice({
                 dreb: 0,
             },
             Away: {
+                name: "",
                 pts: 0,
                 reb: 0,
                 ast: 0,
@@ -232,6 +254,8 @@ const boxSlice = createSlice({
                 case "Home": {
                     state["Home"].push({
                         id: state["Home"].length,
+                        name: "",
+                        number: "",
                         pts: 0,
                         reb: 0,
                         ast: 0,
@@ -253,6 +277,8 @@ const boxSlice = createSlice({
                 case "Away": {
                     state["Away"].push({
                         id: state["Away"].length,
+                        name: "",
+                        number: "",
                         pts: 0,
                         reb: 0,
                         ast: 0,
@@ -283,7 +309,12 @@ const boxSlice = createSlice({
                     for (const stat in state["Home"][length - 1]) {
                         const value = state["Home"][length - 1][stat];
 
-                        if (stat !== "id" && value !== 0) {
+                        if (
+                            stat !== "id" &&
+                            stat !== "name" &&
+                            stat !== "number" &&
+                            value !== 0
+                        ) {
                             return state;
                         }
                     }
@@ -296,7 +327,12 @@ const boxSlice = createSlice({
                     for (const stat in state["Away"][length - 1]) {
                         const value = state["Away"][length - 1][stat];
 
-                        if (stat !== "id" && value !== 0) {
+                        if (
+                            stat !== "id" &&
+                            stat !== "name" &&
+                            stat !== "number" &&
+                            value !== 0
+                        ) {
                             return state;
                         }
                     }
@@ -311,7 +347,7 @@ const boxSlice = createSlice({
             const team = action.payload.Team;
             const id = action.payload.player_id;
             const stats = action.payload.stats;
-
+            console.log(JSON.stringify(state[team][id]));
             for (const stat in stats) {
                 if (action.payload["undo"]) {
                     try {
@@ -331,9 +367,32 @@ const boxSlice = createSlice({
             }
             return state;
         },
+        setName: (state, action) => {
+            const team = action.payload.team;
+            const id = action.payload.id;
+            const name = action.payload.name;
+
+            state[team][id]["name"] = name;
+            return state;
+        },
+        setNumber: (state, action) => {
+            const team = action.payload.team;
+            const id = action.payload.id;
+            const number = action.payload.number;
+
+            state[team][id]["number"] = number;
+            return state;
+        },
     },
 });
 
-export const { increment, decrement, newRow, deleteRow, handleAction } =
-    boxSlice.actions;
+export const {
+    increment,
+    decrement,
+    newRow,
+    deleteRow,
+    handleAction,
+    setName,
+    setNumber,
+} = boxSlice.actions;
 export default boxSlice.reducer;

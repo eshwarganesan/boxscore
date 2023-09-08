@@ -3,17 +3,22 @@ import { useState } from "react";
 import { Provider, useSelector, useDispatch } from "react-redux";
 import store from "./store";
 import Console from "./Console";
-import { newRow, deleteRow, handleAction } from "./boxSlice";
+import { newRow, deleteRow, handleAction, setName, setNumber } from "./boxSlice";
 import { clear, addHistory } from "./consoleSlice";
 
 function TextInput(props) {
     const [data, setData] = useState(0);
     const consoleActions = useSelector((state) => state.console.action);
+    const Team = props.team;
+    const player_id = props.player_id;
+    const dispatch = useDispatch();
 
     const onChangeInput = (e) => {
         if (Object.keys(consoleActions).length === 0) {
             const editData = e.target.value;
+            dispatch(setName({name: editData, team: Team, id: player_id}))
             setData(editData);
+
         } else {
             return;
         }
@@ -32,14 +37,18 @@ function TextInput(props) {
     );
 }
 
-function NumericInput() {
+function NumericInput(props) {
     const [data, setData] = useState(0);
     const consoleActions = useSelector((state) => state.console.action);
+    const Team = props.team;
+    const player_id = props.player_id;
+    const dispatch = useDispatch();
 
     const onChangeInput = (e) => {
         if (Object.keys(consoleActions).length === 0) {
             const value = e.target.value;
             const sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+            dispatch(setNumber({number: sanitizedValue, team: Team, id: player_id}))
             setData(sanitizedValue);
         } else {
             return;
@@ -101,7 +110,7 @@ function Table(props) {
                 <thead>
                     <tr id="Totals" onClick={() => handleClick()}>
                         <td colspan="20">
-                            <TextInput placeholder="Team Name" />
+                            <TextInput placeholder="Team Name" team={team} />
                         </td>
                     </tr>
                     <tr>
@@ -134,12 +143,14 @@ function Table(props) {
                             onClick={() => handleClick(player.id)}
                         >
                             <td>
-                                <NumericInput />
+                                <NumericInput team={team} player_id={player.id}/>
                             </td>
                             <td>
                                 <TextInput
                                     placeholder="Player Name"
                                     colspan="1"
+                                    team={team}
+                                    player_id={player.id}
                                 />
                             </td>
                             <td>{box[team][player.id]["pts"]}</td>
@@ -211,10 +222,10 @@ function Table(props) {
                     </tr>
                 </tbody>
             </table>
-            <button variant="text" onClick={addPlayer}>
+            <button className="btn btn-primary btn-dark btn-sm shadow-none" onClick={addPlayer}>
                 Add Player
             </button>
-            <button variant="text" onClick={delPlayer}>
+            <button className="btn btn-primary btn-dark btn-sm shadow-none" onClick={delPlayer}>
                 Delete Player
             </button>
         </div>
