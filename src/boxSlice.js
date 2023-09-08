@@ -347,7 +347,7 @@ const boxSlice = createSlice({
             const team = action.payload.Team;
             const id = action.payload.player_id;
             const stats = action.payload.stats;
-            console.log(JSON.stringify(state[team][id]));
+            console.log(JSON.stringify(state["Totals"], null, 2));
             for (const stat in stats) {
                 if (action.payload["undo"]) {
                     try {
@@ -372,7 +372,12 @@ const boxSlice = createSlice({
             const id = action.payload.id;
             const name = action.payload.name;
 
-            state[team][id]["name"] = name;
+            if (id !== undefined) {
+                state[team][id]["name"] = name;
+            } else {
+                state["Totals"][team]["name"] = name;
+            }
+
             return state;
         },
         setNumber: (state, action) => {
@@ -380,7 +385,11 @@ const boxSlice = createSlice({
             const id = action.payload.id;
             const number = action.payload.number;
 
-            state[team][id]["number"] = number;
+            if (id !== undefined) {
+                state[team][id]["number"] = number;
+            } else {
+                state["Totals"][team]["number"] = number;
+            }
             return state;
         },
     },

@@ -1,9 +1,15 @@
 import "./App.css";
 import { useState } from "react";
-import { Provider, useSelector, useDispatch } from "react-redux";
-import store from "./store";
+import { useSelector, useDispatch } from "react-redux";
+import { CSVLink } from "react-csv";
 import Console from "./Console";
-import { newRow, deleteRow, handleAction, setName, setNumber } from "./boxSlice";
+import {
+    newRow,
+    deleteRow,
+    handleAction,
+    setName,
+    setNumber,
+} from "./boxSlice";
 import { clear, addHistory } from "./consoleSlice";
 
 function TextInput(props) {
@@ -16,9 +22,8 @@ function TextInput(props) {
     const onChangeInput = (e) => {
         if (Object.keys(consoleActions).length === 0) {
             const editData = e.target.value;
-            dispatch(setName({name: editData, team: Team, id: player_id}))
+            dispatch(setName({ name: editData, team: Team, id: player_id }));
             setData(editData);
-
         } else {
             return;
         }
@@ -48,7 +53,9 @@ function NumericInput(props) {
         if (Object.keys(consoleActions).length === 0) {
             const value = e.target.value;
             const sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-            dispatch(setNumber({number: sanitizedValue, team: Team, id: player_id}))
+            dispatch(
+                setNumber({ number: sanitizedValue, team: Team, id: player_id })
+            );
             setData(sanitizedValue);
         } else {
             return;
@@ -143,7 +150,10 @@ function Table(props) {
                             onClick={() => handleClick(player.id)}
                         >
                             <td>
-                                <NumericInput team={team} player_id={player.id}/>
+                                <NumericInput
+                                    team={team}
+                                    player_id={player.id}
+                                />
                             </td>
                             <td>
                                 <TextInput
@@ -222,10 +232,16 @@ function Table(props) {
                     </tr>
                 </tbody>
             </table>
-            <button className="btn btn-primary btn-dark btn-sm shadow-none" onClick={addPlayer}>
+            <button
+                className="btn btn-primary btn-dark btn-sm shadow-none"
+                onClick={addPlayer}
+            >
                 Add Player
             </button>
-            <button className="btn btn-primary btn-dark btn-sm shadow-none" onClick={delPlayer}>
+            <button
+                className="btn btn-primary btn-dark btn-sm shadow-none"
+                onClick={delPlayer}
+            >
                 Delete Player
             </button>
         </div>
@@ -233,12 +249,52 @@ function Table(props) {
 }
 
 function App() {
+    const headers = [
+        { label: "No.", key: "number" },
+        { label: "Player", key: "name" },
+        { label: "PTS", key: "pts" },
+        { label: "REB", key: "reb" },
+        { label: "AST", key: "ast" },
+        { label: "FGM", key: "fgm" },
+        { label: "FGA", key: "fga" },
+        { label: "3FGM", key: "3fgm" },
+        { label: "3FGA", key: "3fga" },
+        { label: "FTM", key: "ftm" },
+        { label: "FTA", key: "fta" },
+        { label: "STL", key: "stl" },
+        { label: "BLK", key: "blk" },
+        { label: "TO", key: "to" },
+        { label: "PF", key: "pf" },
+        { label: "OREB", key: "oreb" },
+        { label: "DREB", key: "dreb" },
+    ];
+
+    const data = useSelector((state) => state.boxScore);
+
     return (
-        <Provider store={store}>
+        <div>
             <Table team="Home" />
             <Table team="Away" />
             <Console />
-        </Provider>
+            <button className="btn btn-primary btn-dark btn-sm shadow-none">
+                <CSVLink
+                    data={data["Home"]}
+                    headers={headers}
+                    filename={data["Totals"]["Home"]["name"]}
+                >
+                    CSV download for home team
+                </CSVLink>
+            </button>
+            <button className="btn btn-primary btn-dark btn-sm shadow-none">
+                <CSVLink
+                    data={data["Away"]}
+                    headers={headers}
+                    filename={data["Totals"]["Away"]["name"]}
+                >
+                    CSV download for away team
+                </CSVLink>
+            </button>
+        </div>
     );
 }
 
