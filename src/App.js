@@ -2,6 +2,7 @@ import "./App.css";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { CSVLink } from "react-csv";
+import * as XLSX from "xlsx/xlsx.mjs";
 import Console from "./Console";
 import {
     newRow,
@@ -87,6 +88,48 @@ function NumericInput(props) {
     );
 }
 
+function ExportToExcel() {
+    const workbook = XLSX.utils.book_new();
+    const box = useSelector((state) => state.boxScore);
+
+    const handleClick = () => {
+        const homeTeamName = [[box["Totals"]["Home"].name]];
+        const homeNames = box["Home"].map((player) => [player.name]);
+        const homeNumbers = box["Home"].map((player) => [player.number]);
+        const awayTeamName = [[box["Totals"]["Away"].name]];
+        const awayNames = box["Away"].map((player) => [player.name]);
+        const awayNumbers = box["Away"].map((player) => [player.number]);
+
+        const homeTeam = XLSX.utils.table_to_sheet(
+            document.getElementById("Home")
+        );
+        const awayTeam = XLSX.utils.table_to_sheet(
+            document.getElementById("Away")
+        );
+        XLSX.utils.sheet_add_aoa(homeTeam, homeTeamName, { origin: "A1" });
+        XLSX.utils.sheet_add_aoa(homeTeam, homeNames, { origin: "B3" });
+        XLSX.utils.sheet_add_aoa(homeTeam, homeNumbers, { origin: "A3" });
+        XLSX.utils.sheet_add_aoa(awayTeam, awayTeamName, { origin: "A1" });
+        XLSX.utils.sheet_add_aoa(awayTeam, awayNames, { origin: "B3" });
+        XLSX.utils.sheet_add_aoa(awayTeam, awayNumbers, { origin: "A3" });
+        XLSX.utils.book_append_sheet(workbook, homeTeam, "Home");
+        XLSX.utils.book_append_sheet(workbook, awayTeam, "Away");
+
+        XLSX.writeFile(workbook, "game.xlsx");
+    };
+
+    return (
+        <div>
+            <button
+                className="btn btn-primary btn-dark btn-sm shadow-none"
+                onClick={() => handleClick()}
+            >
+                Export to Excel
+            </button>
+        </div>
+    );
+}
+
 function Table(props) {
     const dispatch = useDispatch();
     const team = props.team;
@@ -98,7 +141,7 @@ function Table(props) {
     };
     const delPlayer = () => {
         //dispatch(deleteRow(team));
-        dispatch(deletePlayer({Team: team, player_id: 2}));
+        dispatch(deletePlayer({ Team: team, player_id: 2 }));
     };
     const handleClick = (id) => {
         if (Object.keys(consoleActions).length > 0) {
@@ -115,7 +158,7 @@ function Table(props) {
 
     return (
         <div>
-            <table>
+            <table id={team}>
                 <thead>
                     <tr id="Totals" onClick={() => handleClick()}>
                         <td colspan="20">
@@ -145,7 +188,7 @@ function Table(props) {
                         <th>3PT%</th>
                     </tr>
                 </thead>
-                <tbody id={team}>
+                <tbody>
                     {box[team].map((player) => (
                         <tr
                             key={player.id}
@@ -184,8 +227,7 @@ function Table(props) {
                                 {player["fga"] === 0
                                     ? 0
                                     : (
-                                          (player["fgm"] /
-                                              player["fga"]) *
+                                          (player["fgm"] / player["fga"]) *
                                           100
                                       ).toFixed(2)}
                             </td>
@@ -193,8 +235,7 @@ function Table(props) {
                                 {player["fta"] === 0
                                     ? 0
                                     : (
-                                          (player["ftm"] /
-                                              player["fta"]) *
+                                          (player["ftm"] / player["fta"]) *
                                           100
                                       ).toFixed(2)}
                             </td>
@@ -202,8 +243,7 @@ function Table(props) {
                                 {player["3fga"] === 0
                                     ? 0
                                     : (
-                                          (player["3fgm"] /
-                                              player["3fga"]) *
+                                          (player["3fgm"] / player["3fga"]) *
                                           100
                                       ).toFixed(2)}
                             </td>
@@ -228,9 +268,33 @@ function Table(props) {
                         <td>{box["Totals"][team]["pf"]}</td>
                         <td>{box["Totals"][team]["oreb"]}</td>
                         <td>{box["Totals"][team]["dreb"]}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            {box["Totals"][team]["fga"] === 0
+                                ? 0
+                                : (
+                                      (box["Totals"][team]["fgm"] /
+                                          box["Totals"][team]["fga"]) *
+                                      100
+                                  ).toFixed(2)}
+                        </td>
+                        <td>
+                            {box["Totals"][team]["fta"] === 0
+                                ? 0
+                                : (
+                                      (box["Totals"][team]["ftm"] /
+                                          box["Totals"][team]["fta"]) *
+                                      100
+                                  ).toFixed(2)}
+                        </td>
+                        <td>
+                            {box["Totals"][team]["3fga"] === 0
+                                ? 0
+                                : (
+                                      (box["Totals"][team]["3fgm"] /
+                                          box["Totals"][team]["3fga"]) *
+                                      100
+                                  ).toFixed(2)}
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -296,6 +360,7 @@ function App() {
                     CSV download for away team
                 </CSVLink>
             </button>
+            <ExportToExcel></ExportToExcel>
         </div>
     );
 }
