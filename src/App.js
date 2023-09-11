@@ -6,6 +6,7 @@ import Console from "./Console";
 import {
     newRow,
     deleteRow,
+    deletePlayer,
     handleAction,
     setName,
     setNumber,
@@ -96,7 +97,8 @@ function Table(props) {
         dispatch(newRow(team));
     };
     const delPlayer = () => {
-        dispatch(deleteRow(team));
+        //dispatch(deleteRow(team));
+        dispatch(deletePlayer({Team: team, player_id: 2}));
     };
     const handleClick = (id) => {
         if (Object.keys(consoleActions).length > 0) {
@@ -163,45 +165,45 @@ function Table(props) {
                                     player_id={player.id}
                                 />
                             </td>
-                            <td>{box[team][player.id]["pts"]}</td>
-                            <td>{box[team][player.id]["reb"]}</td>
-                            <td>{box[team][player.id]["ast"]}</td>
-                            <td>{box[team][player.id]["fgm"]}</td>
-                            <td>{box[team][player.id]["fga"]}</td>
-                            <td>{box[team][player.id]["ftm"]}</td>
-                            <td>{box[team][player.id]["fta"]}</td>
-                            <td>{box[team][player.id]["3fgm"]}</td>
-                            <td>{box[team][player.id]["3fga"]}</td>
-                            <td>{box[team][player.id]["stl"]}</td>
-                            <td>{box[team][player.id]["blk"]}</td>
-                            <td>{box[team][player.id]["to"]}</td>
-                            <td>{box[team][player.id]["pf"]}</td>
-                            <td>{box[team][player.id]["oreb"]}</td>
-                            <td>{box[team][player.id]["dreb"]}</td>
+                            <td>{player["pts"]}</td>
+                            <td>{player["reb"]}</td>
+                            <td>{player["ast"]}</td>
+                            <td>{player["fgm"]}</td>
+                            <td>{player["fga"]}</td>
+                            <td>{player["ftm"]}</td>
+                            <td>{player["fta"]}</td>
+                            <td>{player["3fgm"]}</td>
+                            <td>{player["3fga"]}</td>
+                            <td>{player["stl"]}</td>
+                            <td>{player["blk"]}</td>
+                            <td>{player["to"]}</td>
+                            <td>{player["pf"]}</td>
+                            <td>{player["oreb"]}</td>
+                            <td>{player["dreb"]}</td>
                             <td>
-                                {box[team][player.id]["fga"] === 0
+                                {player["fga"] === 0
                                     ? 0
                                     : (
-                                          (box[team][player.id]["fgm"] /
-                                              box[team][player.id]["fga"]) *
+                                          (player["fgm"] /
+                                              player["fga"]) *
                                           100
                                       ).toFixed(2)}
                             </td>
                             <td>
-                                {box[team][player.id]["fta"] === 0
+                                {player["fta"] === 0
                                     ? 0
                                     : (
-                                          (box[team][player.id]["ftm"] /
-                                              box[team][player.id]["fta"]) *
+                                          (player["ftm"] /
+                                              player["fta"]) *
                                           100
                                       ).toFixed(2)}
                             </td>
                             <td>
-                                {box[team][player.id]["3fga"] === 0
+                                {player["3fga"] === 0
                                     ? 0
                                     : (
-                                          (box[team][player.id]["3fgm"] /
-                                              box[team][player.id]["3fga"]) *
+                                          (player["3fgm"] /
+                                              player["3fga"]) *
                                           100
                                       ).toFixed(2)}
                             </td>

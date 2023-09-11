@@ -250,115 +250,91 @@ const boxSlice = createSlice({
         increment: (state) => void (state["Home"][1].pts += 1),
         decrement: (state) => void (state["Home"][1].pts -= 1),
         newRow: (state, action) => {
-            switch (action.payload) {
-                case "Home": {
-                    state["Home"].push({
-                        id: state["Home"].length,
-                        name: "",
-                        number: "",
-                        pts: 0,
-                        reb: 0,
-                        ast: 0,
-                        fgm: 0,
-                        fga: 0,
-                        ftm: 0,
-                        fta: 0,
-                        "3fgm": 0,
-                        "3fga": 0,
-                        stl: 0,
-                        blk: 0,
-                        to: 0,
-                        pf: 0,
-                        oreb: 0,
-                        dreb: 0,
-                    });
-                    return state;
-                }
-                case "Away": {
-                    state["Away"].push({
-                        id: state["Away"].length,
-                        name: "",
-                        number: "",
-                        pts: 0,
-                        reb: 0,
-                        ast: 0,
-                        fgm: 0,
-                        fga: 0,
-                        ftm: 0,
-                        fta: 0,
-                        "3fgm": 0,
-                        "3fga": 0,
-                        stl: 0,
-                        blk: 0,
-                        to: 0,
-                        pf: 0,
-                        oreb: 0,
-                        dreb: 0,
-                    });
-                    return state;
-                }
-                default:
-                    return state;
-            }
+            const team = action.payload;
+            const lastPlayer = state[team].length - 1;
+            const newPlayerID = state[team][lastPlayer].id + 1;
+            state[team].push({
+                id: newPlayerID,
+                name: "",
+                number: "",
+                pts: 0,
+                reb: 0,
+                ast: 0,
+                fgm: 0,
+                fga: 0,
+                ftm: 0,
+                fta: 0,
+                "3fgm": 0,
+                "3fga": 0,
+                stl: 0,
+                blk: 0,
+                to: 0,
+                pf: 0,
+                oreb: 0,
+                dreb: 0,
+            });
+            console.log(JSON.stringify(state[team], null, 2));
+            return state;
         },
         deleteRow: (state, action) => {
-            switch (action.payload) {
-                case "Home": {
-                    const length = state["Home"].length;
+            const team = action.payload;
+            const length = state[team].length;
 
-                    for (const stat in state["Home"][length - 1]) {
-                        const value = state["Home"][length - 1][stat];
+            for (const stat in state[team][length - 1]) {
+                const value = state[team][length - 1][stat];
 
-                        if (
-                            stat !== "id" &&
-                            stat !== "name" &&
-                            stat !== "number" &&
-                            value !== 0
-                        ) {
-                            return state;
-                        }
-                    }
-                    state["Home"].pop();
+                if (
+                    stat !== "id" &&
+                    stat !== "name" &&
+                    stat !== "number" &&
+                    value !== 0
+                ) {
                     return state;
                 }
-                case "Away": {
-                    const length = state["Away"].length;
-
-                    for (const stat in state["Away"][length - 1]) {
-                        const value = state["Away"][length - 1][stat];
-
-                        if (
-                            stat !== "id" &&
-                            stat !== "name" &&
-                            stat !== "number" &&
-                            value !== 0
-                        ) {
-                            return state;
-                        }
-                    }
-                    state["Away"].pop();
-                    return state;
-                }
-                default:
-                    return state;
             }
+            state[team].pop();
+            return state;
+        },
+        deletePlayer: (state, action) => {
+            const team = action.payload.Team;
+            const id = action.payload.player_id;
+            const length = state[team].length;
+
+            for (const stat in state[team][length - 1]) {
+                const value = state[team][length - 1][stat];
+
+                if (
+                    stat !== "id" &&
+                    stat !== "name" &&
+                    stat !== "number" &&
+                    value !== 0
+                ) {
+                    return state;
+                }
+            }
+            state[team].splice(id, 1);
+            console.log(JSON.stringify(state[team], null, 2));
+
+            return state;
         },
         handleAction: (state, action) => {
             const team = action.payload.Team;
             const id = action.payload.player_id;
             const stats = action.payload.stats;
-            console.log(JSON.stringify(state["Totals"], null, 2));
+
             for (const stat in stats) {
                 if (action.payload["undo"]) {
                     try {
-                        state[team][id][stat] -= stats[stat];
+                        const index = state[team].findIndex(player => player.id === id);
+                        state[team][index][stat] -= stats[stat];
                     } catch (err) {
                     } finally {
                         state["Totals"][team][stat] -= stats[stat];
                     }
                 } else {
                     try {
-                        state[team][id][stat] += stats[stat];
+                        const index = state[team].findIndex(player => player.id === id);
+                        state[team][index][stat] += stats[stat];
                     } catch (err) {
                     } finally {
                         state["Totals"][team][stat] += stats[stat];
@@ -373,7 +349,8 @@ const boxSlice = createSlice({
             const name = action.payload.name;
 
             if (id !== undefined) {
-                state[team][id]["name"] = name;
+                const index = state[team].findIndex(player => player.id === id);
+                state[team][index]["name"] = name;
             } else {
                 state["Totals"][team]["name"] = name;
             }
@@ -386,7 +363,8 @@ const boxSlice = createSlice({
             const number = action.payload.number;
 
             if (id !== undefined) {
-                state[team][id]["number"] = number;
+                const index = state[team].findIndex(player => player.id === id);
+                state[team][index]["number"] = number;
             } else {
                 state["Totals"][team]["number"] = number;
             }
@@ -400,6 +378,7 @@ export const {
     decrement,
     newRow,
     deleteRow,
+    deletePlayer,
     handleAction,
     setName,
     setNumber,
