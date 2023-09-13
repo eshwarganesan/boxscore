@@ -313,7 +313,6 @@ const boxSlice = createSlice({
                 }
             }
             state[team].splice(id, 1);
-            console.log(JSON.stringify(state[team], null, 2));
 
             return state;
         },
