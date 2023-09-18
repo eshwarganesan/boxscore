@@ -1,0 +1,13 @@
+bugs to fix:
+- undoing after deleting a player (fixed by preventing deletion of player  with stats)
+
+todo:
+- team stats in console in case they miss the player (x)
+- adjusting the team score (x)
+- download to csv (x)
+- export to excel spreadsheet(x)
+- prevent deletion of player with stats (x)
+- (optional) delete certain players that perhaps never played or were a mistake in the middle row(x)
+- saving temporary progress in cache and starting new game
+- menu system with saved games
+- ui design

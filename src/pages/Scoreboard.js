@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { CSVLink } from "react-csv";
 import * as XLSX from "xlsx/xlsx.mjs";
-import Console from "./Console";
+import Console from "../Console";
 import {
     newRow,
     deleteRow,
@@ -11,8 +11,8 @@ import {
     handleAction,
     setName,
     setNumber,
-} from "./boxSlice";
-import { clear, addHistory } from "./consoleSlice";
+} from "../boxSlice";
+import { clear, addHistory } from "../consoleSlice";
 
 function TextInput(props) {
     const [data, setData] = useState(0);
@@ -140,8 +140,8 @@ function Table(props) {
         dispatch(newRow(team));
     };
     const delPlayer = () => {
-        //dispatch(deleteRow(team));
-        dispatch(deletePlayer({ Team: team, player_id: 2 }));
+        dispatch(deleteRow(team));
+        //dispatch(deletePlayer({ Team: team, player_id: 2 }));
     };
     const handleClick = (id) => {
         if (Object.keys(consoleActions).length > 0) {
@@ -314,7 +314,7 @@ function Table(props) {
     );
 }
 
-function App() {
+function Scoreboard() {
     const headers = [
         { label: "No.", key: "number" },
         { label: "Player", key: "name" },
@@ -338,7 +338,7 @@ function App() {
     const data = useSelector((state) => state.boxScore);
 
     return (
-        <div>
+        <div className="App">
             <Table team="Home" />
             <Table team="Away" />
             <Console />
@@ -365,4 +365,4 @@ function App() {
     );
 }
 
-export default App;
+export default Scoreboard;

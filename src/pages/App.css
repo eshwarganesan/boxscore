@@ -3,6 +3,10 @@
   background-color: #F7F3F3;
 }
 
+.Header {
+  text-align: right;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
