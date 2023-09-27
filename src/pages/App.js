@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Scoreboard from "./Scoreboard";
 import Login from "./Login";
-import firebase from "firebase/compat/app";
 import "firebase/auth";
 import { auth } from "../firebase";
 import { useEffect } from "react";
