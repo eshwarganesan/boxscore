@@ -1,33 +1,30 @@
-const express = require("express");
-const mongoClient = require("mongodb").MongoClient;
-const bodyParser = require("body-parser");
-const passport = require("passport");
-const config = require("./database");
-const cors = require("cors");
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors'
+import { MongoClient } from 'mongodb';
+import auth from '../src/firebase.js'
+//const passport = require("passport");
+const config = 'mongodb://localhost:27017'
 
 const app = express();
 
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Replace with your frontend's URL
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Enable cookies and authentication headers (if needed)
+    origin: "http://localhost:3000", // Replace with your frontend's URL
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // Enable cookies and authentication headers (if needed)
 };
 
-
 let db;
-
-mongoClient
-    .connect(config.DB, { useNewUrlParser: true, useUnifiedTopology: true })
+MongoClient
+    .connect(config, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((client) => {
-        db = client.db('boxscores'); // Assign the database connection to the "db" variable
+        db = client.db("boxscores"); // Assign the database connection to the "db" variable
         console.log("Connected to MongoDB");
     })
     .catch((err) => {
         console.error("Error connecting to MongoDB:", err);
     });
-
-
 
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -46,18 +43,18 @@ app.post("/save-box-score", (req, res) => {
     console.log("Saving box score");
     const collection = req.db.collection("boxScores");
     const boxScoreData = req.body;
-    try{
+    try {
         collection.insertOne(boxScoreData);
         console.log("Box score saved successfully");
         res.status(200).json({ message: "Box score saved successfully" });
-    }
-    catch(err){
+    } catch (err) {
         console.log("Failed to save box score");
         console.log(err);
-        res.status(500).json({ message: "Faled to save box score", error: err})
+        res.status(500).json({
+            message: "Faled to save box score",
+            error: err,
+        });
     }
-    
-
 });
 
 const PORT = process.env.PORT || 3001;

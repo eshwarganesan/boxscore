@@ -20,8 +20,8 @@ import {
     foul,
     clear,
     undo,
-} from "./consoleSlice";
-import { handleAction } from "./boxSlice";
+} from "./consoleSlice.js";
+import { handleAction } from "./boxSlice.js";
 
 const Console = () => {
     const dispatch = useDispatch();

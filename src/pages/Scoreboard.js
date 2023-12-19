@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { CSVLink } from "react-csv";
 import * as XLSX from "xlsx/xlsx.mjs";
-import Console from "../Console";
+import Console from "../Console.js";
 import {
     newRow,
     deleteRow,
@@ -11,8 +11,8 @@ import {
     handleAction,
     setName,
     setNumber,
-} from "../boxSlice";
-import { clear, addHistory } from "../consoleSlice";
+} from "../boxSlice.js";
+import { clear, addHistory } from "../consoleSlice.js";
 
 function TextInput(props) {
     const [data, setData] = useState(0);

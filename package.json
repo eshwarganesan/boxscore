@@ -2,6 +2,7 @@
   "name": "boxscore",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@auth0/auth0-react": "^2.2.1",
     "@mui/icons-material": "^5.11.16",

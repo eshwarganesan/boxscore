@@ -1,15 +1,15 @@
 // App.js
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import Scoreboard from "./Scoreboard";
-import Login from "./Login";
+import Scoreboard from "./Scoreboard.js";
+import Login from "./Login.js";
 import "firebase/auth";
-import { auth } from "../firebase";
+import firebase from "../firebase.js";
 import { useEffect } from "react";
-import ProtectedRoute from "./ProtectedRoute";
-import Profile from "./Profile";
+import ProtectedRoute from "./ProtectedRoute.js";
+import Profile from "./Profile.js";
 import { useSelector } from "react-redux";
-import axios from 'axios'
+import axios from "axios";
 
 function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,24 +25,23 @@ function App() {
     };
 
     const handleSignOut = async () => {
-        await auth.signOut();
+        await firebase.auth.signOut();
     };
 
     const handleSave = () => {
-        axios.post('http://localhost:3001/save-box-score', {boxScore})
-            .then(res => {
+        axios
+            .post("http://localhost:3001/save-box-score", { boxScore })
+            .then((res) => {
                 console.log(res);
             })
-            .catch(error => {
-                console.error('Error:', error);
-            })
-
-        
-    }
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+    };
 
     useEffect(() => {
         // Update the userSignedIn state based on the authentication status
-        const unsubscribe = auth.onAuthStateChanged((user) => {
+        const unsubscribe = firebase.auth.onAuthStateChanged((user) => {
             if (user) {
                 setUserSignedIn(true);
             } else {
@@ -59,7 +58,9 @@ function App() {
                 {userSignedIn ? (
                     <div>
                         <button onClick={handleSave}>Save box score</button>
-                        <Link className="btn btn-primary" to="/profile">Profile</Link>
+                        <Link className="btn btn-primary" to="/profile">
+                            Profile
+                        </Link>
                         <button onClick={handleSignOut}>Sign Out</button>
                     </div>
                 ) : (

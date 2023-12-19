@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import { auth, googleAuthProvider } from "../firebase";
+import firebase from "../firebase.js";
 import { signInWithPopup } from "firebase/auth";
-require("firebase/auth");
+import axios from "axios";
 
 Modal.setAppElement("#root"); // Set the modal's root element
 
@@ -11,7 +11,10 @@ function Login({ isOpen, onClose }) {
 
     const handleGoogleSignIn = async () => {
         try {
-            await signInWithPopup(auth, googleAuthProvider);
+            await signInWithPopup(firebase.auth, firebase.googleAuthProvider);
+            firebase.auth.currentUser.getIdToken().then((token) => {
+                console.log(token);
+            });
             onClose(); // Close the modal upon successful sign-in
         } catch (err) {
             setError(err.message);
