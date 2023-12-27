@@ -52,6 +52,30 @@ function App() {
         return () => unsubscribe();
     }, []);
 
+    useEffect(() => {
+        let timeoutId;
+    
+        const handleLogout = () => {
+          firebase.auth.signOut();
+        };
+    
+        const handleSessionTimeout = () => {
+          console.log('Session timed out. Logging out...');
+          handleLogout();
+        };
+    
+        if (userSignedIn) {
+          // Set your desired session timeout duration (e.g., 30 minutes)
+          const sessionTimeoutDuration = 1 * 60 * 1000;
+    
+          timeoutId = setTimeout(handleSessionTimeout, sessionTimeoutDuration);
+        }
+    
+        return () => {
+          clearTimeout(timeoutId);
+        };
+      }, [userSignedIn]);
+
     return (
         <Router>
             <div className="Header">
