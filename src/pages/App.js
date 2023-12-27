@@ -54,27 +54,48 @@ function App() {
 
     useEffect(() => {
         let timeoutId;
-    
+        const sessionTimeoutDuration = 1 * 60 * 1000;
+
         const handleLogout = () => {
-          firebase.auth.signOut();
+            firebase.auth.signOut();
         };
-    
+
         const handleSessionTimeout = () => {
-          console.log('Session timed out. Logging out...');
-          handleLogout();
+            console.log("Session timed out. Logging out...");
+            handleLogout();
         };
-    
+
+        const resetSessionTimeout = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(
+                handleSessionTimeout,
+                sessionTimeoutDuration
+            );
+        };
+
+        const handleUserActivity = () => {
+            resetSessionTimeout();
+        };
+
         if (userSignedIn) {
-          // Set your desired session timeout duration (e.g., 30 minutes)
-          const sessionTimeoutDuration = 1 * 60 * 1000;
-    
-          timeoutId = setTimeout(handleSessionTimeout, sessionTimeoutDuration);
+            timeoutId = setTimeout(
+                handleSessionTimeout,
+                sessionTimeoutDuration
+            );
+
+            // Attach event listeners for user activity
+            window.addEventListener("mousemove", handleUserActivity);
+            window.addEventListener("keydown", handleUserActivity);
         }
-    
+
         return () => {
-          clearTimeout(timeoutId);
+            clearTimeout(timeoutId);
+
+            // Remove event listeners when the component unmounts
+            window.removeEventListener("mousemove", handleUserActivity);
+            window.removeEventListener("keydown", handleUserActivity);
         };
-      }, [userSignedIn]);
+    }, [userSignedIn]);
 
     return (
         <Router>
