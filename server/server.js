@@ -1,13 +1,15 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors'
-import { MongoClient } from 'mongodb';
-import auth from '../src/firebase.js'
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import { MongoClient } from "mongodb";
+import auth from "../src/firebase.js";
+import admin from "firebase-admin";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 //const passport = require("passport");
-const config = 'mongodb://localhost:27017'
+const config = "mongodb://localhost:27017";
 
 const app = express();
-
 
 const corsOptions = {
     origin: "http://localhost:3000", // Replace with your frontend's URL
@@ -15,9 +17,35 @@ const corsOptions = {
     credentials: true, // Enable cookies and authentication headers (if needed)
 };
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const serviceAccount = join(
+    __dirname,
+    "./firebaseConfig/boxscore-dcbb1-firebase-adminsdk-8a493-936b9ecc64.json"
+); // Update with the actual path to your service account key file
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://boxscore-dcbb1-default-rtdb.firebaseio.com", // Update with your Firebase project URL
+});
+
+const verifyFirebaseToken = async (req, res, next) => {
+    const idToken = req.headers.authorization;
+
+    try {
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        req.user = decodedToken; // Attach user information to the request object
+        console.log("Decoded Token:", decodedToken); // Log decoded token for debugging
+        next();
+    } catch (error) {
+        console.error("Error verifying Firebase token:", error);
+        res.status(401).json({ error: "Unauthorized" });
+    }
+};
+
 let db;
-MongoClient
-    .connect(config, { useNewUrlParser: true, useUnifiedTopology: true })
+MongoClient.connect(config, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((client) => {
         db = client.db("boxscores"); // Assign the database connection to the "db" variable
         console.log("Connected to MongoDB");
@@ -55,6 +83,11 @@ app.post("/save-box-score", (req, res) => {
             error: err,
         });
     }
+});
+
+app.get("/protected-route", verifyFirebaseToken, (req, res) => {
+    // Access the authenticated user information via req.user
+    res.json({ message: "This route is protected!", user: req.user });
 });
 
 const PORT = process.env.PORT || 3001;

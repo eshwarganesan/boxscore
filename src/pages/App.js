@@ -14,6 +14,7 @@ import axios from "axios";
 function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [userSignedIn, setUserSignedIn] = useState(false);
+    const [token, setToken] = useState(null);
     const boxScore = useSelector((state) => state.boxScore);
 
     const handleOpenModal = () => {
@@ -39,11 +40,28 @@ function App() {
             });
     };
 
+    const testRoute = () => {
+        console.log(token);
+        axios
+            .get("http://localhost:3001/protected-route", {
+                headers: { Authorization: token },
+            })
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+    };
+
     useEffect(() => {
         // Update the userSignedIn state based on the authentication status
         const unsubscribe = firebase.auth.onAuthStateChanged((user) => {
             if (user) {
                 setUserSignedIn(true);
+                firebase.auth.currentUser.getIdToken().then((token) => {
+                    setToken(token);
+                });
             } else {
                 setUserSignedIn(false);
             }
@@ -54,7 +72,7 @@ function App() {
 
     useEffect(() => {
         let timeoutId;
-        const sessionTimeoutDuration = 1 * 60 * 1000;
+        const sessionTimeoutDuration = 60 * 60 * 1000;
 
         const handleLogout = () => {
             firebase.auth.signOut();
@@ -103,6 +121,9 @@ function App() {
                 {userSignedIn ? (
                     <div>
                         <button onClick={handleSave}>Save box score</button>
+                        <button onClick={testRoute}>
+                            Test protected route
+                        </button>
                         <Link className="btn btn-primary" to="/profile">
                             Profile
                         </Link>
