@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { CSVLink } from "react-csv";
 import * as XLSX from "xlsx/xlsx.mjs";
@@ -15,17 +15,16 @@ import {
 import { clear, addHistory } from "../consoleSlice.js";
 
 function TextInput(props) {
-    const [data, setData] = useState(0);
-    const consoleActions = useSelector((state) => state.console.action);
+    const box = useSelector((state) => state.boxScore);
     const Team = props.team;
     const player_id = props.player_id;
+    const consoleActions = useSelector((state) => state.console.action);
     const dispatch = useDispatch();
 
     const onChangeInput = (e) => {
         if (Object.keys(consoleActions).length === 0) {
             const editData = e.target.value;
             dispatch(setName({ name: editData, team: Team, id: player_id }));
-            setData(editData);
         } else {
             return;
         }
@@ -34,7 +33,7 @@ function TextInput(props) {
     return (
         <input
             name="name"
-            value={data.name}
+            value={player_id != null ? box[Team][player_id]["name"] : box["Totals"][Team]["name"]}
             type="text"
             placeholder={props.placeholder}
             onChange={(e) => onChangeInput(e)}
@@ -45,7 +44,7 @@ function TextInput(props) {
 }
 
 function NumericInput(props) {
-    const [data, setData] = useState(0);
+    const box = useSelector((state) => state.boxScore);
     const consoleActions = useSelector((state) => state.console.action);
     const Team = props.team;
     const player_id = props.player_id;
@@ -58,7 +57,6 @@ function NumericInput(props) {
             dispatch(
                 setNumber({ number: sanitizedValue, team: Team, id: player_id })
             );
-            setData(sanitizedValue);
         } else {
             return;
         }
@@ -76,7 +74,7 @@ function NumericInput(props) {
     return (
         <input
             name="number"
-            value={data.number}
+            value={box[Team][player_id]["number"]}
             type="text"
             maxLength={3}
             placeholder="#"

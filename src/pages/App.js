@@ -30,14 +30,26 @@ function App() {
     };
 
     const handleSave = () => {
-        axios
-            .post("http://localhost:3001/save-box-score", { boxScore })
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+        if (userSignedIn) {
+            const uid = firebase.auth.currentUser.uid;
+            axios
+                .post(
+                    "http://localhost:3001/save-box-score",
+                    {
+                        boxScore: boxScore,
+                        uid: uid,
+                    },
+                    {
+                        headers: { Authorization: token },
+                    }
+                )
+                .then((res) => {
+                    console.log(res);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        }
     };
 
     const testRoute = () => {
@@ -64,6 +76,7 @@ function App() {
                 });
             } else {
                 setUserSignedIn(false);
+                setToken(null);
             }
         });
 
@@ -121,9 +134,7 @@ function App() {
                 {userSignedIn ? (
                     <div>
                         <button onClick={handleSave}>Save box score</button>
-                        <button onClick={testRoute}>
-                            Test protected route
-                        </button>
+                        <button onClick={testRoute}>Refresh token</button>
                         <Link className="btn btn-primary" to="/profile">
                             Profile
                         </Link>
@@ -131,6 +142,9 @@ function App() {
                     </div>
                 ) : (
                     <div>
+                        <button onClick={testRoute}>
+                            Test protected route
+                        </button>
                         <button onClick={handleOpenModal}>Sign In</button>
                     </div>
                 )}

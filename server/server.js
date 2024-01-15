@@ -32,7 +32,6 @@ admin.initializeApp({
 
 const verifyFirebaseToken = async (req, res, next) => {
     const idToken = req.headers.authorization;
-
     try {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
         req.user = decodedToken; // Attach user information to the request object
@@ -67,12 +66,12 @@ app.get("/", function (req, res) {
     res.send("hello");
 });
 
-app.post("/save-box-score", (req, res) => {
+app.post("/save-box-score", verifyFirebaseToken, (req, res) => {
     console.log("Saving box score");
     const collection = req.db.collection("boxScores");
-    const boxScoreData = req.body;
+    const {boxScore, uid} = req.body;
     try {
-        collection.insertOne(boxScoreData);
+        collection.insertOne({ boxScore, uid });
         console.log("Box score saved successfully");
         res.status(200).json({ message: "Box score saved successfully" });
     } catch (err) {

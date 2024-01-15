@@ -369,6 +369,10 @@ const boxSlice = createSlice({
             }
             return state;
         },
+        setBoxScore: (state, action)=> {
+            state = action.payload;
+            return state;
+        }
     },
 });
 
@@ -381,5 +385,6 @@ export const {
     handleAction,
     setName,
     setNumber,
+    setBoxScore,
 } = boxSlice.actions;
 export default boxSlice.reducer;
