@@ -89,6 +89,16 @@ app.get("/protected-route", verifyFirebaseToken, (req, res) => {
     res.json({ message: "This route is protected!", user: req.user });
 });
 
+app.get("/box-scores/:userId", verifyFirebaseToken, async (req, res) => {
+    try {
+        const {userId} = req.params;
+        const boxScores = await req.db.collection("boxScores").find({ uid: userId }).toArray();
+        res.json(boxScores);
+    } catch (error) {
+        console.error('Error retrieving box scores:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
