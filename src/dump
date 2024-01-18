@@ -8,6 +8,7 @@ todo:
 - export to excel spreadsheet(x)
 - prevent deletion of player with stats (x)
 - (optional) delete certain players that perhaps never played or were a mistake in the middle row(x)
-- saving temporary progress in cache and starting new game
-- menu system with saved games
+- saving temporary progress in cache (x)
+- starting new game 
+- menu system with saved games(x)
 - ui design
