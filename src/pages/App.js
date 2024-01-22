@@ -8,7 +8,8 @@ import firebase from "../firebase.js";
 import { useEffect } from "react";
 import ProtectedRoute from "./ProtectedRoute.js";
 import Profile from "./Profile.js";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { newBoxScore } from "../boxSlice.js";
 import axios from "axios";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
     const [userSignedIn, setUserSignedIn] = useState(false);
     const [token, setToken] = useState(null);
     const boxScore = useSelector((state) => state.boxScore);
+    const dispatch = useDispatch();
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -64,6 +66,10 @@ function App() {
             .catch((error) => {
                 console.error("Error:", error);
             });
+    };
+
+    const newGame = () => {
+        dispatch(newBoxScore());
     };
 
     useEffect(() => {
@@ -133,6 +139,9 @@ function App() {
             <div className="Header">
                 {userSignedIn ? (
                     <div>
+                        <Link to="/">
+                            <button onClick={newGame}>New Game</button>
+                        </Link>
                         <button onClick={handleSave}>Save box score</button>
                         <button onClick={testRoute}>Refresh token</button>
                         <Link className="btn btn-primary" to="/profile">
@@ -142,9 +151,7 @@ function App() {
                     </div>
                 ) : (
                     <div>
-                        <button onClick={testRoute}>
-                            Test protected route
-                        </button>
+                        <button onClick={newGame}>New Game</button>
                         <button onClick={handleOpenModal}>Sign In</button>
                     </div>
                 )}
